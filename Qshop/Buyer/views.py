@@ -149,6 +149,9 @@ def cart(request): #购物车
 
 def place_order(request):
     order_id=request.GET.get("order_id")
+    email = request.COOKIES.get("email")
+    user = Quser.objects.get(email=email)
+    addr = user.goodsaddress_set.filter()
     if order_id:
         p_order=Pay_order.objects.get(order_id=order_id) #订单信息
         order_data=p_order.order_info_set.all() #详情信息
@@ -205,3 +208,28 @@ def user_center_info(request):
     user_info=Quser.objects.get(email=email)
     goods_his=History.objects.filter(user_email=email)
     return render(request,"buyer/user_center_info.html",locals())
+
+#个人收件地址
+from QUser.models import GoodsAddress
+def user_center_site(request):
+    email=request.COOKIES.get("email")
+    user=Quser.objects.get(email=email)
+    addr=user.goodsaddress_set.filter(state=1)[0]
+    if request.method=="POST":
+        recv=request.POST.get("recv")
+        address=request.POST.get("address")
+        post_number=request.POST.get("post_number")
+        phone=request.POST.get("phone")
+
+        addr=GoodsAddress()
+        addr.recver=recv
+        addr.address=address
+        addr.post_number=post_number
+        addr.state=0 #添加收件地址的时候设置为常规地址
+        addr.recver=recv
+        addr.user=user
+        addr.save()
+
+    return render(request, "buyer/user_center_site.html", locals())
+
+

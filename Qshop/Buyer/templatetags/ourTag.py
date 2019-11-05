@@ -21,6 +21,13 @@ def uper(obj):
     return obj.upper()
 
 @register.filter
-def jq(obj,):
+def jq(obj):
     result=obj.replace("/media/","")
     return result
+
+@register.filter("set_phone")
+def set_phone(obj):
+    result=obj[:3]+"****"+obj[7:]
+    return result
+
+
