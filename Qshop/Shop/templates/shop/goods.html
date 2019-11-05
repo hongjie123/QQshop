@@ -1,0 +1,50 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    详情页
+{% endblock %}
+
+{% block content %}
+    <table class="table ">
+        <tr>
+            <td rowspan="4">
+                <img src="/static/{{ goods_data.picture }}" style="width: 200px;height: 200px" alt="">
+            </td>
+            <td>商品名称：</td>
+            <td>{{ goods_data.name }}</td>
+            <td>价格：</td>
+            <td>{{ goods_data.price }}</td>
+        </tr>
+        <tr>
+            <td>商品数量：</td>
+            <td>{{ goods_data.number }}</td>
+            <td>生产日期：</td>
+            <td>{{ goods_data.production }}</td>
+        </tr>
+        <tr>
+            <td>保质期;</td>
+            <td>{{ goods_data.safe_date }}</td>
+            <td>状态：</td>
+            <td>
+                {% if goods_data.statue %}
+                    在售
+                {% else %}
+                    下架
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>商品描述：</td>
+            <td colspan="3">{{ goods_data.description|safe }}</td>
+        </tr>
+        <tr>
+            <td colspan="7"><a href="/Shop/list_goods/" class="btn btn-primary btn-block">返回</a></td>
+        </tr>
+        <tr>
+            <td colspan="7">
+                <a href="/Shop/test_goods/{{ goods_data.id }}/" class="btn btn-primary btn-block">修改商品信息</a>
+{#                <a href="/Shop/update_goods/{{ goods_data.id }}/" class="btn btn-primary btn-block">修改商品信息</a>#}
+            </td>
+        </tr>
+    </table>
+{% endblock %}

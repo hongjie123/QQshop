@@ -1,0 +1,49 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    展示商品页
+{% endblock %}
+
+{% block label %}
+    <a  class="btn btn-warning btn-block" href="/Shop/test_goods/">添加商品</a>
+{#    <a  class="btn btn-warning btn-block" href="/Shop/add_goods/">添加商品</a>#}
+
+{% endblock %}
+
+{% block content %}
+    <table class="table dataTable">
+        <tr>
+            <th>图片展示</th>
+            <th>商品名称</th>
+            <th>价格</th>
+            <th>数量</th>
+            <th>生产日期</th>
+            <th>保质期</th>
+            <th>操作</th>
+        </tr>
+        {% for goods in goods_list %}
+            <tr>
+                <td>
+                    <a href=/Shop/goods/{{ goods.id }}/">
+                        <img src="/static/{{ goods.picture }}" style="width: 100px;height: 100px" alt="">
+                    </a>
+                </td>
+                <td style="line-height: 100px">
+                    <a href="/Shop/goods/{{ goods.id }}/">{{ goods.name }}</a>
+                </td>
+                <td style="line-height: 100px">{{ goods.price }}</td>
+                <td style="line-height: 100px">{{ goods.number }}</td>
+                <td style="line-height: 100px">{{ goods.production }}</td>
+                <td style="line-height: 100px">{{ goods.safe_date }}</td>
+
+                <td style="line-height: 100px">
+                    {% ifequal goods.statue 1%}
+                        <a href="/Shop/set_goods/{{ goods.id }}/" class="btn btn-danger">下架</a>
+                     {% else %}
+                        <a href="/Shop/set_goods/{{ goods.id }}/" class="btn btn-primary">上架</a>
+                    {% endifequal %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

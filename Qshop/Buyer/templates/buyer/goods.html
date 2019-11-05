@@ -1,0 +1,149 @@
+{% extends "buyer/base.html" %}
+
+{% block title %}
+    商品详情页
+{% endblock %}
+
+{% block navbar_con %}
+    <div class="navbar_con">
+		<div class="navbar">
+			<h1 class="fl">全部商品分类</h1>
+			<ul class="navlist fl">
+				<li><a href="/">首页</a></li>
+				<li class="interval">|</li>
+				<li><a href="">手机生鲜</a></li>
+				<li class="interval">|</li>
+				<li><a href="">抽奖</a></li>
+			</ul>
+		</div>
+	</div>
+{% endblock %}
+
+{% block content %}
+    <div class="breadcrumb">
+        <a href="http://127.0.0.1:8000/">全部分类</a>
+        <span>></span>
+        <a href="/Buyer/goods_list/?id=1">新鲜水果</a>
+        <span>></span>
+        <a href="#">商品详情</a>
+    </div>
+
+    <div class="goods_detail_con clearfix">
+        <div class="goods_detail_pic fl"><img style="width: 350px;height: 350px" src="/static/{{ goods_data.picture }}">
+        </div>
+
+        <div class="goods_detail_list fr">
+            <h3>{{ goods_data.name }}</h3>
+            <p>{{ goods_data.description }}</p>
+            <div class="prize_bar">
+                <span class="show_pirze" >￥<em id="price">{{ goods_data.price }}</em></span>
+                <span class="show_unit">单  位：500g</span>
+            </div>
+            <div class="goods_num clearfix">
+                <div class="num_name fl">数 量：</div>
+                <div class="num_add fl">
+                    <input type="text" class="num_show fl" value="1" id="number">
+                    <a href="javascript:;" class="add fr" onclick="change_number('u')">+</a>
+                    <a href="javascript:;" class="minus fr" onclick="change_number('d')">-</a>
+                </div>
+            </div>
+            <div class="total">总价：<em id="totals">{{ goods_data.price }}</em></div>
+            <div class="operate_btn">
+                <a href="/Buyer/place_order/" class="buy_btn">立即购买</a>
+                <a href="javascript:;" class="add_cart" good_num="{{ goods_data.id }}" id="add_cart" onclick="add_car(this)">加入购物车</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main_wrap clearfix">
+        <div class="l_wrap fl clearfix">
+            <div class="new_goods">
+                <h3>新品推荐</h3>
+                <ul>
+                    <li>
+                        <a href="#"><img src="/static/buyer/images/goods/goods001.jpg"></a>
+                        <h4><a href="#">进口柠檬</a></h4>
+                        <div class="prize">￥3.90</div>
+                    </li>
+                    <li>
+                        <a href="#"><img src="/static/buyer/images/goods/goods002.jpg"></a>
+                        <h4><a href="#">玫瑰香葡萄</a></h4>
+                        <div class="prize">￥16.80</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="r_wrap fr clearfix">
+            <ul class="detail_tab clearfix">
+                <li class="active">商品介绍</li>
+                <li>评论</li>
+            </ul>
+
+            <div class="tab_content">
+                <dl>
+                    <dt>商品详情：</dt>
+                    <dd>草莓采摘园位于北京大兴区 庞各庄镇四各庄村
+                        ，每年1月-6月面向北京以及周围城市提供新鲜草莓采摘和精品礼盒装草莓，草莓品种多样丰富，个大香甜。所有草莓均严格按照有机标准培育，不使用任何化肥和农药。草莓在采摘期间免洗可以直接食用。欢迎喜欢草莓的市民前来采摘，也欢迎各大单位选购精品有机草莓礼盒，有机草莓礼盒是亲朋馈赠、福利送礼的最佳选择。
+                    </dd>
+                </dl>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="/static/buyer/js/jquery-1.12.4.min.js"></script>
+    <script>
+        function change_number(t) {
+            var obj = $("#number");//根据id获取imput框
+            var value = parseInt(obj.val());//获取input框的值，并且转为数字
+            var price = parseFloat($("#price").text());
+            if (t == "u") {
+                var value = value + 1;
+            } else if (t == "d") {
+                var value = value - 1;
+            }
+            if (value < 1) {
+                value = 1
+            }
+            var total = price * value;
+            $("#totals").text(total + "元");
+            obj.val(value)
+        };
+        $("#number").blur(
+            function () {
+                var obj = $("#number");
+                var value = parseInt(obj.val());
+                var price = parseFloat($("#price").text());
+                if (value < 1) {
+                    value = 1;
+                    obj.val(value);
+                }
+                var total = price * value;
+                $("#totals").text(total + "元");
+            }
+        );
+
+        function add_car(obj) {
+            var goods_id = $(obj).attr("good_num");
+            var good_number = $("#number").val();
+            var post_data = {"goods_id": goods_id, "number": good_number, "csrfmiddlewaretoken": '{{csrf_token}}'};
+            console.log(post_data);
+            $.ajax(
+                {
+                    url: "/Buyer/add_car/",
+                    type: "post",
+                    data: post_data,
+                    success: function (data) {
+                        alert(data["data"])
+                    },
+                    error: function (error) {
+                        console.log(error)
+                    }
+                }
+            )
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    {{ request.COOKIES.email }}的个人中心
+{% endblock %}
+
+{% block label %}
+
+{% endblock %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+        <table class="table dataTable" >
+            <tr>
+                <td rowspan="3">
+                    <img src="/static/{{ user.picture }}" style="width: 200px;height: 200px" alt=""><br>
+                    <input type="file" value="/static/{{ user.picture }}" name="picture" style="width: 200px">
+                </td>
+                <td>用户名：</td>
+                <td>{{ user.email }}</td>
+                <td>密码：</td>
+                <td colspan="4">******</td>
+            </tr>
+            <tr>
+                <td>姓名：</td>
+                <td><input type="text" name="username" value="{{ user.username }}"></td>
+                <td>性别：</td>
+                <td><input type="text" name="gender" value="{{ user.gender }}"></td>
+                <td>年龄：</td>
+                <td><input type="text" name="age" value="{{ user.age }}"></td>
+            </tr>
+            <tr>
+
+                <td>电话：</td>
+                <td ><input type="text" name="phone" value="{{ user.phone }}"></td>
+                <td>地址：</td>
+                <td colspan="4"><input type="text" name="address" value="{{ user.address }}"></td>
+
+            </tr>
+            <tr>
+                <td colspan="7"><input type="submit" class="btn btn-primary btn-block" value="提交个人信息"></td>
+            </tr>
+        </table>
+    </form>
+
+{% endblock %}

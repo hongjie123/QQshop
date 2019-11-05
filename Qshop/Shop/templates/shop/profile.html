@@ -1,0 +1,72 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    {{ request.COOKIES.email }}的个人中心
+{% endblock %}
+
+{% block label %}
+
+{% endblock %}
+
+{% block content %}
+    <table class="table dataTable">
+        <tr>
+            <td rowspan="3">
+                <img src="/static/{{ user.picture }}" style="width: 200px;height: 200px" alt="">
+            </td>
+            <td>用户名：</td>
+            <td>{{ user.email }}</td>
+            <td>密码：</td>
+            <td colspan="4"><a href="#" class="btn btn-warning" data-toggle="modal" data-target="#logoutModal">修改密码</a></td>
+        </tr>
+        <tr>
+            <td>姓名：</td>
+            <td>{{ user.username }}</td>
+            <td>性别：</td>
+            <td>{{ user.gender }}</td>
+            <td>年龄：</td>
+            <td>{{ user.age }}</td>
+        </tr>
+        <tr>
+
+            <td>电话：</td>
+            <td >{{ user.phone }}</td>
+            <td>地址：</td>
+            <td colspan="4">{{ user.address }}</td>
+
+        </tr>
+        <tr>
+            <td colspan="7"><a href="/Shop/set_profile/" class="btn btn-primary btn-block">完善个人信息</a></td>
+        </tr>
+    </table>
+
+    <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">修改密码</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+
+        <form method="post" >
+            {% csrf_token %}
+
+            <div class="modal-body">
+                <input type="password" class="form-control form-control-user"  placeholder="确认密码" name="password">
+            </div>
+            <div class="modal-footer">
+{#              <button class="btn btn-secondary" type="button" data-dismiss="modal">确认修改密码</button>#}
+{#              <a class="btn btn-primary" href="/Shop/profile/">确认修改密码</a>#}
+                <input type="submit" class="btn btn-primary" value="确认修改密码">
+            </div>
+
+         </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

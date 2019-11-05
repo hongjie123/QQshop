@@ -1,0 +1,144 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    vue页面
+{% endblock %}
+
+{% block style %}
+    <script src="/static/shop/vendor/jquery/jquery.min.js"></script>
+    <script src="/static/shop/js/vue.min.js"></script>
+    <script src="/static/shop/js/vue-resource.js"></script>
+{% endblock %}
+
+{% block label %}
+    <a class="btn btn-warning btn-block" href="/Shop/test_goods/">添加商品</a>
+    {#    <a  class="btn btn-warning btn-block" href="/Shop/add_goods/">添加商品</a>#}
+{% endblock %}
+
+{% block content %}
+    {% verbatim myblock %}
+        <div id="goods_table" class="row">
+
+            <div class="input-group">
+              <input type="text" id="keywords" class="form-control bg-light border-2 small" placeholder="搜索" aria-label="Search" aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button" v-on:click="get_keywords_data()">
+
+                  <i class="fas fa-search fa-sm"></i>
+                </button>
+              </div>
+            </div>
+
+            <table class="table dataTable">
+                <tr>
+
+                    <th>商品名称</th>
+                    <th>价格</th>
+                    <th>数量</th>
+                    <th>生产日期</th>
+                    <th>保质期</th>
+                    <th>操作</th>
+                </tr>
+                <tr v-for="g in goods_list">
+                    <td><a v-bind:href="'/Shop/goods/'+g.id+'/'">{{ g.name }}</a></td>
+                    <td><a v-on:click="say_hello(g.price)">{{ g.price }}</a></td>
+                    <td>{{ g.number }}</td>
+                    <td>{{ g.production }}</td>
+                    <td>{{ g.safe_date }}</td>
+                    <td>
+
+                        <a v-if="g.statue == 1" v-bind:href="'/Shop/vue_list_goods/?id='+g.id+'&page='+page" class="btn btn-danger" style="color: white;">下架</a>
+                        <a v-else-if="g.statue == 0" v-bind:href="'/Shop/vue_list_goods/?id='+g.id+'&page='+page" class="btn btn-primary" style="color: white;">上架</a>
+
+
+                    </td>
+                </tr>
+            </table>
+
+            <div class="dataTables_paginate paging_simple_numbers">
+                <ul class="pagination">
+                    <li class="paginate_button page-item" v-for="page in page_range">
+                        <a class="page-link" v-on:click="get_page_data(page)">
+                            {{ page }}
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+
+        </div>
+    {% endverbatim myblock %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        Vue.use(VueResource); //声明使用的是vue-resource
+        var vue = new Vue(
+            {
+                el: "#goods_table", //要绑定的对象
+                data: {
+                    "message": "hello world",
+                    "goods_list": [],
+                    "page_range": [],
+                    "referer":"",
+                    "page": ""
+                },// 具体要绑定的数据
+                created: function () {
+                    this.$http.get("/Shop/Goods/").then(
+                        function (data) {
+                            this.page = 3;
+                            console.log(data["data"]["data"]);
+                            this.goods_list = data["data"]["data"];
+                            this.page_range = data["data"]["page_range"];
+{#                            this.page = data["data"]["page"];#}
+                            console.log(data["data"]["page"]);
+                            alert(data["data"]["page"]);
+                            console.log(data["data"]["page_range"])
+                        },
+                        function (error) {
+                            console.log(error)
+                        }
+                    )
+                },// 初始化执行
+                methods: {
+                    get_keywords_data: function () {
+                        var keywords=$("#keywords").val();//获取input的值
+                        var url = "/Shop/Goods/?keywords=" + keywords;
+
+                        this.$http.get(url).then(
+                            function (data) {
+                                this.goods_list = data["data"]["data"];
+                                this.page_range = data["data"]['page_range'];
+                                this.referer=data["data"]["referer"];//将上次请求的关键字返回
+                            },//处理接受的数据
+                            function (error) {
+                                console.log(error)
+                            }
+                        )
+
+                    },
+                    get_page_data: function (page) {
+                        this.page = page;
+                        var url = "/Shop/Goods/?page=" + page+this.referer;
+                        console.log(url);
+                        this.$http.get(url).then(
+                            function (data) {
+                                this.goods_list = data["data"]["data"];
+                                this.page_range = data["data"]['page_range'];
+                                console.log(data)
+                            },
+                            function (error) {
+                                console.log(error)
+                            }
+                        )
+
+                    },
+                    say_hello: function (arg) {
+                        alert(arg)
+                    }
+
+                } //vue需要绑定的函数功能
+            }
+        )
+    </script>
+{% endblock %}
