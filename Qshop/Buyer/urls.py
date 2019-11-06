@@ -17,5 +17,6 @@ urlpatterns = [
     path("add_car/", add_car),
     path("user_center_info/", user_center_info),
     path("user_center_site/", user_center_site),
+    path("user_center_order/", user_center_order),
 
 ]

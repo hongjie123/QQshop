@@ -21,9 +21,9 @@ def Pay(order_id,money):
     order_string = alipay.api_alipay_trade_page_pay(
         out_trade_no=order_id,
         total_amount=str(money),  # 将Decimal类型转换为字符串交给支付宝
-        subject="商贸商城",
+        subject="志励图书网",
         return_url="http://127.0.0.1:8000/Buyer/pay_result/", #完成之后返回
-        notify_url="http://127.0.0.1:8000/Buyer/pay_result/?out_order_id=%s"%order_id  # 可选, 支付状态被修改，调用的路由
+        notify_url="http://127.0.0.1:8000/Buyer/pay_result/"  # 可选, 支付状态被修改，调用的路由
     )
 
     # 让用户进行支付的支付宝页面网址

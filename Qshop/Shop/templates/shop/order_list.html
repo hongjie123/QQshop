@@ -1,0 +1,44 @@
+{% extends "shop/base.html" %}
+
+
+{% block title %}
+    订单列表
+{% endblock %}
+
+
+{% block content %}
+    <table class="table dataTable">
+        <tr>
+            <th>订单编号</th>
+            <th>商品名称</th>
+            <th>商品数量</th>
+            <th>商品总价</th>
+            <th>操作</th>
+        </tr>
+        {% for order in order_lst %}
+            <tr>
+                <td>{{ order.order_id.order_id }}</td>
+                <td>{{ order.goods_name }}</td>
+                <td>{{ order.goods_number }}</td>
+                <td>{{ order.goods_total }}</td>
+                <td>
+                    {% ifequal order.order_id.order_state 0 %}
+                        <button class="btn btn-primary">提醒支付</button>
+                    {% endifequal %}
+                    {% ifequal order.order_id.order_state 1 %}
+                        <a href="/Shop/send_shop/?order_id={{ order.order_id.order_id }}" class="btn btn-primary">去发货</a>
+                    {% endifequal %}
+                    {% ifequal order.order_id.order_state 2 %}
+                        已发货
+                    {% endifequal %}
+                    {% ifequal order.order_id.order_state 1 %}
+                        订单完成
+                    {% endifequal %}
+
+                </td>
+            </tr>
+        {% endfor %}
+        
+
+    </table>
+{% endblock %}

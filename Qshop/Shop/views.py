@@ -353,10 +353,25 @@ def test_goods(request, id=None):
 def base(request):
     return render(request, "shop/base.html")
 
+#订单列表
+def order_list(request):
+    email=request.COOKIES.get("email")
+    user=Quser.objects.get(email=email)
+    order_lst=user.order_info_set.all()
+    return render(request,"shop/order_list.html",locals())
+
+#发货功能
+from Buyer.models import Pay_order
+def send_shop(request):
+    order_id=request.GET.get("order_id")
+    if order_id:
+        p_order=Pay_order.objects.get(order_id=order_id)
+        p_order.order_state=2
+        p_order.save()
+    return HttpResponseRedirect("/Shop/order_list/")
+
 
 from QUser.models import Quser
-
-
 @login_valid
 def profile(request):
     """

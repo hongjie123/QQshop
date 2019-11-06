@@ -169,7 +169,7 @@ def get_pay(request):
 def pay_result(request):
     data = request.GET #订单的详细数据
 
-    order_id=request.GET.get("out_order_id")
+    order_id=request.GET.get("out_trade_no")
     p_order=Pay_order.objects.get(order_id=order_id)
     p_order.order_state=1 #改变订单的状态，改为（已支付）
     p_order.save()
@@ -232,4 +232,11 @@ def user_center_site(request):
 
     return render(request, "buyer/user_center_site.html", locals())
 
+
+def user_center_order(request):
+    email=request.COOKIES.get("email") #获取cookies中的email
+    user=Quser.objects.filter(email=email).first() #通过email获取对应的用户
+    if user:
+        order_list=user.pay_order_set.all() #获取对应的订单
+    return render(request,"buyer/user_center_order.html",locals())
 

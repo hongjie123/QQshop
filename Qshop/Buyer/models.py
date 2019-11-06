@@ -31,6 +31,7 @@ class Pay_order(models.Model):
     order_number=models.IntegerField() #买入商品的条数
     order_total=models.FloatField(default=0)
     order_state=models.IntegerField(default=0) #订单的状态
+
     order_user=models.ForeignKey(to=Quser,on_delete=models.CASCADE)#买家
 
 class Order_info(models.Model):
