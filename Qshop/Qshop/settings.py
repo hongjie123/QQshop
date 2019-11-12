@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'Buyer',
 ]
 
+#中间件
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,7 +54,55 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Qshop.middleware.MiddleWareIp', #自己写的，功能是禁止127.0.0.1访问
 ]
+
+# 缓存(自写)
+# CACHES={      #内存缓存，使用本地的内存作为缓存
+#     'default':{
+#         'BACKEND':'django.core.cache.backends.locmem.LocMemCache', #缓存的类型
+#         'LOCATION':'hello', #变量：缓存的名字，文件缓存：就是文件名，数据库缓存就是数据库的名字
+#         'TIMEOUT':300, #缓存时间，默认300秒，如果为None，代表永不过期
+#         'OPTIONS':{
+#             'MAX_ENTRIES':300, #最大缓存个数，默认也是300个
+#             'CULL_FREQUENCY':3 #到达最大缓存数之后，删除缓存的比例，默认是3
+#         }
+#     }
+# }
+
+# CACHES={      #文件缓存
+#     'default':{
+#         'BACKEND':'django.core.cache.backends.filebased.FileBasedCache', #缓存的类型
+#         'LOCATION':os.path.join(BASE_DIR,"cache_file"), #变量：缓存的名字，文件缓存：就是文件名，数据库缓存就是数据库的名字
+#         'TIMEOUT':300, #缓存时间，默认300秒，如果为None，代表永不过期
+#         'OPTIONS':{
+#             'MAX_ENTRIES':300, #最大缓存个数，默认也是300个
+#             'CULL_FREQUENCY':3 #到达最大缓存数之后，删除缓存的比例，默认是3
+#         }
+#     }
+# }
+# CACHES={      #数据库缓存
+#     'default':{
+#         'BACKEND':'django.core.cache.backends.db.DatabaseCache', #缓存的类型
+#         'LOCATION':'cache_table', #变量：缓存的名字，文件缓存：就是文件名，数据库缓存就是数据库的名字
+#         'TIMEOUT':300, #缓存时间，默认300秒，如果为None，代表永不过期
+#         'OPTIONS':{
+#             'MAX_ENTRIES':300, #最大缓存个数，默认也是300个
+#             'CULL_FREQUENCY':3 #到达最大缓存数之后，删除缓存的比例，默认是3
+#         }
+#     }
+# }
+CACHES={      #memcached服务器
+    'default':{
+        'BACKEND':'django.core.cache.backends.memcached.MemcachedCache', #缓存的类型
+        'LOCATION':'127.0.0.1:11211', #变量：缓存的名字，文件缓存：就是文件名，数据库缓存就是数据库的名字
+        'TIMEOUT':300, #缓存时间，默认300秒，如果为None，代表永不过期
+        # 'OPTIONS':{
+        #     'MAX_ENTRIES':300, #最大缓存个数，默认也是300个
+        #     'CULL_FREQUENCY':3 #到达最大缓存数之后，删除缓存的比例，默认是3
+        # }
+    }
+}
 
 ROOT_URLCONF = 'Qshop.urls'
 
@@ -91,6 +140,22 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': "qshop",
+#         'HOST': "10.10.101.42",
+#         'PASSWORD': "123456",
+#         'USER': "root"
+#     },
+#     'slave': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': "qshop",
+#         'HOST': "10.10.101.213",
+#         'PASSWORD': "123456",
+#         'USER': "root"
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

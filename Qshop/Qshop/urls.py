@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include,re_path
-from Buyer.views import index
+from Buyer.views import index,middle_test
+
 
 urlpatterns = [
     re_path(r"^$",index),
@@ -23,5 +24,7 @@ urlpatterns = [
     path('Shop/', include("Shop.urls")),
     path('Buyer/', include("Buyer.urls")),
     path('ckeditor/', include("ckeditor_uploader.urls")),
+
+    path('middle/',middle_test) #测试中间件的process_template_response
 
 ]

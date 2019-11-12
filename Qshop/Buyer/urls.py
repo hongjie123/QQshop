@@ -6,6 +6,7 @@ urlpatterns = [
 
     re_path(r"^$", index),
     path("index/", index),
+    path("register/", register),
     path("login/", login),
 
     path("goods_list/", list),

@@ -24,6 +24,8 @@ urlpatterns = [
     path("order_list/",order_list),
     path("send_shop/",send_shop),
 
+    path("return_goods_number/",return_goods_number),#用于首页柱状图
+
 ]
 
 urlpatterns+=[

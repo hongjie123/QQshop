@@ -2,7 +2,7 @@ from django.shortcuts import render,HttpResponseRedirect
 from django.http import JsonResponse
 
 from Shop.models import *
-from QUser.views import valid_user,set_password
+from QUser.views import valid_user,set_password,add_user
 from Buyer.models import *
 # 校验登录
 def login_valid(fun):
@@ -39,7 +39,7 @@ def login(request):
             if db_password == request_password:
                 if request.POST.get("referer"):
                     referer = request.POST.get("referer")
-                if referer in ('http://127.0.0.1:8000/Buyer/login/',"None"):
+                if referer in ('http://127.0.0.1:8000/Buyer/login/','http://127.0.0.1:8000/Buyer/register/',"None"):
                     referer = "/"
                 response = HttpResponseRedirect(referer)
                 # response = HttpResponseRedirect("/Buyer/cart/")
@@ -54,8 +54,11 @@ def login(request):
             error = "用户不存在！"
     return render(request,"buyer/login.html",locals())
 
+from django.views.decorators.cache import cache_page
 
+@cache_page(15*60)
 def index(request):
+
     #获取所有类型
     type_list=GoodsType.objects.all()
     #获取单条类型
@@ -90,6 +93,27 @@ def list(request):
 def goods(request,id):
     goods_data=Goods.objects.get(id=(id))
     email=request.COOKIES.get("email")
+    if request.method=="POST":
+        sum_number=request.POST.get("sum_number")
+        number=int(sum_number)
+        # 保存订单主表
+        p_order = Pay_order()
+        p_order.order_id = str(time.time()).replace(".", "")
+        p_order.order_number = 1
+        p_order.order_user = Quser.objects.get(email=email)
+        p_order.order_total=number*goods_data.price
+        p_order.save()  # 这里没有保存总价
+
+        o_info = Order_info()
+        o_info.order_id = p_order  # 不是很懂
+        o_info.goods_name = goods_data.name
+        o_info.goods_number = number
+        o_info.goods_price = goods_data.price
+        o_info.goods_total = number * goods_data.price
+        o_info.goods_picture = goods_data.picture.url
+        o_info.order_store = goods_data.goods_store
+        o_info.save()
+        return HttpResponseRedirect("/Buyer/place_order/?order_id=%s" % p_order.order_id)
     if email:
         now_data=History.objects.filter(user_email=email).order_by("id")
         if len(now_data)>=5:
@@ -205,6 +229,8 @@ def add_car(request):
 #个人中心
 def user_center_info(request):
     email=request.COOKIES.get("email")
+    if not email:
+        return HttpResponseRedirect("/Buyer/login/")
     user_info=Quser.objects.get(email=email)
     goods_his=History.objects.filter(user_email=email)
     return render(request,"buyer/user_center_info.html",locals())
@@ -214,8 +240,10 @@ from QUser.models import GoodsAddress
 def user_center_site(request):
     email=request.COOKIES.get("email")
     user=Quser.objects.get(email=email)
-    addr=user.goodsaddress_set.filter(state=1)[0]
-    if request.method=="POST":
+    addr=GoodsAddress.objects.all()
+    if addr:
+        addr=user.goodsaddress_set.filter(state=1)[0]
+    elif request.method=="POST":
         recv=request.POST.get("recv")
         address=request.POST.get("address")
         post_number=request.POST.get("post_number")
@@ -235,8 +263,39 @@ def user_center_site(request):
 
 def user_center_order(request):
     email=request.COOKIES.get("email") #获取cookies中的email
-    user=Quser.objects.filter(email=email).first() #通过email获取对应的用户
+    user=Quser.objects.get(email=email) #通过email获取对应的用户
     if user:
         order_list=user.pay_order_set.all() #获取对应的订单
     return render(request,"buyer/user_center_order.html",locals())
 
+def register(request):
+    error=""
+    if request.method=="POST":
+        user_name=request.POST.get("user_name")
+        password=request.POST.get("pwd")
+        c_password=request.POST.get("cpwd") #两次密码要一致
+        email=request.POST.get("email") #数据库中不能有此邮箱
+
+        if password != c_password:
+            error="密码不一致，请重新输入！"
+        elif valid_user(email): #校验用户是否已存在
+            error="此邮箱已注册，可直接登录!"
+        else:
+            # 对密码加密
+            password = set_password(password)
+            # 添加到数据库
+            add_user(email=email, password=password,username=user_name)
+            # 跳转到登录
+            return HttpResponseRedirect("/Buyer/login/")
+    return render(request,"buyer/register.html",locals())
+
+
+
+#测试中间件
+from django.http import HttpResponse
+def middle_test(request):
+    def hello():
+        return HttpResponse("Hello World")
+    rep=HttpResponse("靓仔")
+    rep.render=hello
+    return rep

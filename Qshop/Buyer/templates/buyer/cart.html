@@ -76,26 +76,6 @@
         }
     );
 
-    $(".goods_click").each(
-        function change_number(t,goods_id) {
-            var id=goods_id;
-            var obj = $("#number_%s"%id);//根据id获取imput框
-            var value = parseInt(obj.val());//获取input框的值，并且转为数字
-            var price = parseFloat($("#price_%s"%id).text());
-            if (t == "u") {
-                var value = value + 1;
-            } else if (t == "d") {
-                var value = value - 1;
-            }
-            if (value < 1) {
-                value = 1
-            }
-            var total = price * value;
-            $("#totals_%s"%id).text(total + "元");
-            obj.val(value)
-        }
-    )
-
 
     </script>
 {% endblock %}

@@ -134,8 +134,25 @@ def logout(request):
 @login_valid
 def index(request):
     # 后台卖家首页
+    email=request.COOKIES.get("email")
+    user=Quser.objects.get(email=email)
+    #货物种类
+    goods_type_count=user.goods_set.all().count() #计数
 
     return render(request, "shop/index.html", locals())
+
+#用于柱状图和饼图
+def return_goods_number(request):
+    result={"goods_name":[],"goods_number":[],"goods_list":[]}
+    id=request.GET.get("id")
+    if id:
+        user=Quser.objects.get(id=id)
+        goods=user.goods_set.order_by("number")[:6] #计数
+        for i in goods:
+            result["goods_name"].append(i.name)
+            result["goods_number"].append(i.number)
+            result["goods_list"].append({"name":i.name,"value":i.number})
+    return JsonResponse(result)
 
 
 # 添加商品

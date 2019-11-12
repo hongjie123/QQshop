@@ -6,17 +6,17 @@
 
 {% block navbar_con %}
     <div class="navbar_con">
-		<div class="navbar">
-			<h1 class="fl">全部商品分类</h1>
-			<ul class="navlist fl">
-				<li><a href="/">首页</a></li>
-				<li class="interval">|</li>
-				<li><a href="">手机生鲜</a></li>
-				<li class="interval">|</li>
-				<li><a href="">抽奖</a></li>
-			</ul>
-		</div>
-	</div>
+        <div class="navbar">
+            <h1 class="fl">全部商品分类</h1>
+            <ul class="navlist fl">
+                <li><a href="/">首页</a></li>
+                <li class="interval">|</li>
+                <li><a href="">手机生鲜</a></li>
+                <li class="interval">|</li>
+                <li><a href="">抽奖</a></li>
+            </ul>
+        </div>
+    </div>
 {% endblock %}
 
 {% block content %}
@@ -29,29 +29,37 @@
     </div>
 
     <div class="goods_detail_con clearfix">
-        <div class="goods_detail_pic fl"><img style="width: 350px;height: 350px" src="/static/{{ goods_data.picture }}">
+        <div class="goods_detail_pic fl">
+            <img style="width: 350px;height: 350px" src="/static/{{ goods_data.picture }}">
         </div>
 
         <div class="goods_detail_list fr">
             <h3>{{ goods_data.name }}</h3>
             <p>{{ goods_data.description }}</p>
             <div class="prize_bar">
-                <span class="show_pirze" >￥<em id="price">{{ goods_data.price }}</em></span>
+                <span class="show_pirze">￥<em id="price">{{ goods_data.price }}</em></span>
                 <span class="show_unit">单  位：500g</span>
             </div>
-            <div class="goods_num clearfix">
-                <div class="num_name fl">数 量：</div>
-                <div class="num_add fl">
-                    <input type="text" class="num_show fl" value="1" id="number">
-                    <a href="javascript:;" class="add fr" onclick="change_number('u')">+</a>
-                    <a href="javascript:;" class="minus fr" onclick="change_number('d')">-</a>
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="goods_num clearfix">
+                    <div class="num_name fl">数 量：</div>
+                    <div class="num_add fl">
+                        <input type="text" class="num_show fl" value="1" id="number" name="sum_number">
+                        <a href="javascript:;" class="add fr" onclick="change_number('u')">+</a>
+                        <a href="javascript:;" class="minus fr" onclick="change_number('d')">-</a>
+                    </div>
                 </div>
-            </div>
-            <div class="total">总价：<em id="totals">{{ goods_data.price }}</em></div>
-            <div class="operate_btn">
-                <a href="/Buyer/place_order/" class="buy_btn">立即购买</a>
-                <a href="javascript:;" class="add_cart" good_num="{{ goods_data.id }}" id="add_cart" onclick="add_car(this)">加入购物车</a>
-            </div>
+                <div class="total">总价：<em id="totals">{{ goods_data.price }}</em></div>
+                <div class="operate_btn">
+                    {#                    <a href="/Buyer/place_order/" class="buy_btn"></a>#}
+                    <input type="submit" class="buy_btn" value="立即购买">
+                    <a href="javascript:;" class="add_cart" good_num="{{ goods_data.id }}" id="add_cart"
+                       onclick="add_car(this)">加入购物车</a>
+                </div>
+
+            </form>
         </div>
     </div>
 
@@ -125,6 +133,7 @@
                 $("#totals").text(total + "元");
             }
         );
+
         function add_car(obj) {
             var goods_id = $(obj).attr("good_num");
             var good_number = $("#number").val();
@@ -143,6 +152,25 @@
                     }
                 }
             )
-        }
+        };
+        {#        function set_order(obj) {#}
+        {#            var goods_id = $(obj).attr("good_num");#}
+        {#            var good_number = $("#number").val();#}
+        {#            var post_data = {"goods_id": goods_id, "number": good_number, "csrfmiddlewaretoken": '{{csrf_token}}'};#}
+        {#            console.log(post_data);#}
+        {#            $.ajax(#}
+        {#                {#}
+        {#                    url: "/Buyer/add_car/",#}
+        {#                    type: "post",#}
+        {#                    data: post_data,#}
+        {#                    success: function (data) {#}
+        {#                        alert(data["data"])#}
+        {#                    },#}
+        {#                    error: function (error) {#}
+        {#                        console.log(error)#}
+        {#                    }#}
+        {#                }#}
+        {#            )#}
+        {#        }#}
     </script>
 {% endblock %}
